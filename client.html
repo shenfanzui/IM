@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>socket.io客户端</title>
+</head>
+<body>
+    <script src="./node_modules/socket.io/client-dist/socket.io.js"></script>
+    <script>
+        const socket = io('http://localhost:3000'); 
+        // socked.id 
+        socket.on('connect', () =>{
+            console.log(socket.id)
+        })
+        // 发消息
+        socket.emit('client message', {msg: 'hi, server'})
+        // 断开链接
+        socket.on('disconnect', (reason) =>{
+            console.log(`disconnect: ${reason}`)
+        })
+        // 收消息
+        socket.on('server message', data =>{
+            console.log(data.msg)
+        })
+    </script>
+</body>
+</html>

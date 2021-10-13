@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>namespace</title>
+</head>
+<body>
+    <script src="./node_modules/socket.io/client-dist/socket.io.js"></script>
+    <script>
+        // 连接到chat namespace
+        var socket = io.connect('/chat')
+
+        socket.on('connect', () => {
+            console.log('chat连接成功')
+            console.log(socket.id)
+        })
+        socket.on('disconnect', reason => {
+            console.log('disconnect: ' + reason) 
+        })
+
+        socket.emit('room', '78910')
+        socket.on('room', data => {
+            console.log(data)
+        })
+    </script>
+</body>
+</html>

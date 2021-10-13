@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+</head>
+<body>
+    <input type="text" name="" id="">
+    <button>登录</button>
+    <ul>
+
+    </ul>
+
+    <script src="./node_modules/socket.io/client-dist/socket.io.js"></script>
+    <script src="./node_modules/jquery/dist/jquery.js"></script>
+    <script>
+        // 带参数
+        // var socket = io('http://localhost:3001', {_query: 'sid=123456a'})
+        // 带凭证
+        var socket = io('http://localhost:3001', {
+            auth: {
+                token: 'abc'
+            }
+        })
+
+        socket.on('connect', function(){
+            console.log(`id : ${socket.id}`)
+            console.log(socket.connected)  // true
+            // 消息确认
+            socket.emit('confirm', 'confirm info', (data) => {
+                console.log(data)
+            })
+            // 重新连接时清空内部缓冲区
+            socket.sendBuffer = [];
+        })
+
+        $('button').on('click', function(){
+            if (socket.connected) {
+                socket.emit('login', { name : $('input').val()}) 
+            } else {
+                console.log('未连接')
+            }
+        })
+        
+        socket.on('disconnect', function(reason){
+            console.log(`disconnect: ${reason}`)
+            if(reason === 'io server disconnect'){
+                socket.connect();
+            }
+            console.log(`id : ${socket.id}`)  // undefined
+            console.log(socket.connected)  // false
+        })
+
+        socket.on('login', function(names){
+            console.log(`names: ${names}`)
+            $('ul').empty()
+            names.forEach(item => {
+                var $li = $('<li>').text(item)
+                $('ul').append($li) 
+            }); 
+        })
+
+        socket.on('ping', data=>{
+            console.log(data.data)
+            console.log(data.msg)
+        })
+
+        setInterval(()=>{
+            socket.emit('pong', {data: Date().toString(), msg: '客户端消息'})
+        }, 5000)
+        
+        // send message
+        setInterval(()=>{
+            socket.send('服务器你好啊')    
+        }, 5000)
+        socket.on('message', data=>{
+            console.log(data)
+        })
+
+        // connect_error
+        socket.on('connect_error', (err) => {
+            console.log(err instanceof Error)
+            console.log(err.message)
+            console.log(err.data)
+        })
+
+        // onlyone
+        socket.on('only', data => {
+            console.log(`onlyone: ${data}`)
+        })
+    </script>
+</body>
+</html>

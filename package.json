@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@socket.io/admin-ui": "github:socketio/socket.io-admin-ui",
+    "jquery": "^3.6.0",
+    "socket.io": "^4.2.0"
+  }
+}
